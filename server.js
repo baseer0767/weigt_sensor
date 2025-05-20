@@ -5,7 +5,7 @@ const cors = require('cors');
 const path = require('path');
 
 const app = express();
-const PORT = process.env.PORT || 4000;
+const PORT = 4000;
 const uri = "mongodb://localhost:27017";
 const client = new MongoClient(uri);
 
@@ -63,5 +63,5 @@ app.get('/api/loadcell/readings', async (req, res) => {
 
 // Start server
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  console.log(`📦 Weight server running at http://localhost:${PORT}`);
 });
