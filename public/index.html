@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Weight Monitor</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@600&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <header>
+    <h1>📦 Weight Monitor</h1>
+    <p>Real-time weight and load percentage monitoring dashboard</p>
+  </header>
+
+  <div class="cards">
+    <div class="card">
+      <h2>Weight</h2>
+      <div class="value" id="weight">--</div>
+      <div>kg</div>
+    </div>
+    <div class="card">
+      <h2>Percentage</h2>
+      <div class="value" id="percentage">--</div>
+      <div>%</div>
+    </div>
+  </div>
+
+  <div class="chart-container">
+    <h2>📈 Historical Data</h2>
+    <canvas id="weightChart"></canvas>
+  </div>
+
+  <script>
+    async function fetchData() {
+      const res = await fetch('/api/loadcell/readings');
+      const data = await res.json();
+
+      if (!data.length) return;
+
+      const latest = data[data.length - 1];
+      document.getElementById('weight').textContent = latest.weight.toFixed(1);
+      document.getElementById('percentage').textContent = latest.percentage.toFixed(1);
+
+      const labels = data.map(d => new Date(d.timestamp).toLocaleTimeString());
+      const weightData = data.map(d => d.weight);
+
+      const ctx = document.getElementById('weightChart').getContext('2d');
+      new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Weight (kg)',
+            data: weightData,
+            borderColor: '#00d1ff',
+            backgroundColor: 'rgba(0,209,255,0.1)',
+            tension: 0.3
+          }]
+        },
+        options: {
+          scales: {
+            x: { ticks: { color: '#ccc' } },
+            y: { ticks: { color: '#ccc' } }
+          },
+          plugins: {
+            legend: {
+              labels: { color: '#ccc' }
+            }
+          }
+        }
+      });
+    }
+
+    fetchData();
+    setInterval(fetchData, 10000); // refresh every 10s
+  </script>
+</body>
+</html>
