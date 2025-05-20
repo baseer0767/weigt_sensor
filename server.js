@@ -3,6 +3,7 @@ const { MongoClient } = require('mongodb');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const path = require('path');
+const moment = require('moment-timezone');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -31,6 +32,10 @@ app.use(express.static(path.join(__dirname, 'public')));
 // POST endpoint to receive load cell data
 app.post('/api/loadcell', async (req, res) => {
   console.log("Incoming request body:", req.body);
+  console.log("Request headers:", req.headers);
+  console.log("Weight type:", typeof req.body.weight, "Value:", req.body.weight);
+  console.log("Percentage type:", typeof req.body.percentage, "Value:", req.body.percentage);
+
   const { weight, percentage } = req.body;
 
   if (weight == null || percentage == null) {
@@ -41,14 +46,11 @@ app.post('/api/loadcell', async (req, res) => {
     await connectToMongo();
     const collection = db.collection("weight_readings");
 
-const moment = require('moment-timezone');
-
-const newReading = {
-  weight,
-  percentage,
-  timestamp: moment().tz("Asia/Karachi").format(),
-};
-
+    const newReading = {
+      weight: parseFloat(weight), // Convert to number
+      percentage: parseFloat(percentage), // Convert to number
+      timestamp: moment().tz("Asia/Karachi").format(),
+    };
 
     await collection.insertOne(newReading);
     res.status(200).send("Weight reading stored successfully");
@@ -63,7 +65,6 @@ app.get('/api/loadcell/readings', async (req, res) => {
   try {
     await connectToMongo();
     const collection = db.collection("weight_readings");
-
     const readings = await collection.find().toArray();
     res.json(readings);
   } catch (err) {
