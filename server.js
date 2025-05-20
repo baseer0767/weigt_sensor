@@ -6,7 +6,7 @@ const path = require('path');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const uri = process.env.MONGODB_URI || "your_fallback_mongo_uri_here"; // replace fallback if needed
+const uri = "mongodb+srv://sheikhabdulbaseer786:yoBFfmoORB3QEpjM@cluster0.hiywggw.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
 const client = new MongoClient(uri);
 
 let db;
