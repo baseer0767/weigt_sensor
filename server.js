@@ -41,11 +41,14 @@ app.post('/api/loadcell', async (req, res) => {
     await connectToMongo();
     const collection = db.collection("weight_readings");
 
-    const newReading = {
-      weight,
-      percentage,
-      timestamp: new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Karachi" })),
-    };
+const moment = require('moment-timezone');
+
+const newReading = {
+  weight,
+  percentage,
+  timestamp: moment().tz("Asia/Karachi").format(),
+};
+
 
     await collection.insertOne(newReading);
     res.status(200).send("Weight reading stored successfully");
