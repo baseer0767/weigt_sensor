@@ -5,7 +5,7 @@ const cors = require('cors');
 const path = require('path');
 
 const app = express();
-const PORT = 4000;
+const PORT = process.env.PORT || 4000;
 const uri = "mongodb://localhost:27017";
 const client = new MongoClient(uri);
 
