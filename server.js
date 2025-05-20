@@ -29,8 +29,8 @@ app.use(cors());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // POST endpoint to receive load cell data
-console.log("Incoming request body:", req.body);
 app.post('/api/loadcell', async (req, res) => {
+  console.log("Incoming request body:", req.body);
   const { weight, percentage } = req.body;
 
   if (weight == null || percentage == null) {
